@@ -7,9 +7,12 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
 class FavSpotactivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView
@@ -18,6 +21,8 @@ class FavSpotactivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fav_spot)
+        db = Firebase.firestore
+        auth = Firebase.auth
 
 
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -25,7 +30,7 @@ class FavSpotactivity : AppCompatActivity() {
         recyclerView.adapter = SpotListRecyclerAdapter(this,DataManager.item)
         val taskAddButton = findViewById<FloatingActionButton>(R.id.addFloatingButton)
 
-       // loadItems()
+        loadItems()
 
         taskAddButton.setOnClickListener {
             val intent = Intent(this,CreateAndEditSpotList::class.java)

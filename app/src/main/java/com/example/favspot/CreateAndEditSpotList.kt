@@ -1,5 +1,6 @@
 package com.example.favspot
 
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -30,11 +31,17 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
         nameEditText = findViewById(R.id.nameEditText)
         val saveButton = findViewById<ImageButton>(R.id.saveButton)
+        val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
 
         val itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
 
         if (itemPosistion != POSISTION_NOT_SET) {
             displayItem(itemPosistion)
+
+            deleteButton.setOnClickListener {
+                removeItem(itemPosistion)
+
+            }
         } else {
 
         saveButton.setOnClickListener {
@@ -68,6 +75,20 @@ class CreateAndEditSpotList : AppCompatActivity() {
                 DataManager.item.add(item)
                 finish()
             }
+    }
+    fun removeItem(position: Int) {
+        val itemId = DataManager.item[position].id
+        val user = auth.currentUser
+        if (user == null) {
+            return
+        }
+        db.collection("users").document(user.uid).collection("items").document(itemId).delete()
+        removeItemFromFirestore(itemId)
+        DataManager.item.removeAt(position)
+        finish()
+    }
+    fun removeItemFromFirestore(itemId: String) {
+        db.collection("items").document(itemId).delete()
     }
 
 
