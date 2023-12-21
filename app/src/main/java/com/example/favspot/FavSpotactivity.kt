@@ -3,6 +3,7 @@ package com.example.favspot
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,7 +58,6 @@ class FavSpotactivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
-
         recyclerView.adapter?.notifyDataSetChanged()
 
     }
