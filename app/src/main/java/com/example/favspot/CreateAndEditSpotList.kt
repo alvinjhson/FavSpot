@@ -36,6 +36,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
     lateinit var faveSpotImageView : ImageView
     lateinit var nameEditText: EditText
     var currentId : String = ""
+    private var itemPosistion = POSISTION_NOT_SET
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,9 @@ class CreateAndEditSpotList : AppCompatActivity() {
         val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
 
 
-        val itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
+        //val itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
+        itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
+
 
         if (itemPosistion != POSISTION_NOT_SET) {
             displayItem(itemPosistion)
@@ -63,6 +66,11 @@ class CreateAndEditSpotList : AppCompatActivity() {
             deleteButton.setOnClickListener {
 
                 removeItem(itemPosistion)
+
+            }
+            faveSpotImageView.setOnClickListener {
+                //changeImage(itemPosistion)
+                chooseImage()
 
             }
         } else {
@@ -106,6 +114,9 @@ class CreateAndEditSpotList : AppCompatActivity() {
     fun displayItem(position : Int) {
         val item = DataManager.item[position]
         nameEditText.setText(item.itemName)
+        Glide.with(this )
+            .load(item.itemImage)
+            .into(faveSpotImageView)
 
     }
 
@@ -143,6 +154,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
 
 
+
     fun uploadImage(file: Uri) {
         val name = nameEditText.text.toString()
         val item = SpotList(name,"","")
@@ -158,18 +170,33 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
                     // Nu sparar vi URL:en till bilden i Firestore
 
-                    val user = auth.currentUser
-                    if (user != null) {
-                        item.itemImage = uri.toString() // Sätter URL:en till bilden
-                        db.collection("users").document(user.uid)
-                            .collection("items").add(item).addOnSuccessListener { document ->
-                                val id = document.id
-                                currentId = id
-                                Log.d("!!!","current id $currentId")
-                                item.id = id
-                                db.collection("users").document(user.uid).collection("items").document(id).set(item)
-                                DataManager.item.add(item)
+
+                    if (itemPosistion == POSISTION_NOT_SET) {
+                        val user = auth.currentUser
+                        if (user != null) {
+                            item.itemImage = uri.toString() // Sätter URL:en till bilden
+                            db.collection("users").document(user.uid)
+                                .collection("items").add(item).addOnSuccessListener { document ->
+                                    val id = document.id
+                                    currentId = id
+                                    Log.d("!!!", "current id $currentId")
+                                    item.id = id
+                                    db.collection("users").document(user.uid).collection("items")
+                                        .document(id).set(item)
+                                    DataManager.item.add(item)
+                                }
+                        }
+                    }else {
+
+                            val user = auth.currentUser
+                              DataManager.item[itemPosistion].itemImage = uri.toString()
+                            val id = DataManager.item[itemPosistion].id
+                            Log.d("!!!", "current id $id")
+                            if (user != null) {
+                                db.collection("users").document(user.uid).collection("items").document(id)
+                                    .update("itemImage", DataManager.item[itemPosistion].itemImage)
                             }
+
                     }
                 }
             }
