@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,6 +26,7 @@ internal class SpotListRecyclerAdapter(val context: Context,var lists: List<Spot
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         var itemNameView = itemView.findViewById<TextView>(R.id.itemTextView)
         var itemImageView : ImageView = itemView.findViewById(R.id.itemImageView)
+        var ratingBar = itemView.findViewById<RatingBar>(R.id.ratingBar)
         var itemPosistion = 0
 
 
@@ -49,6 +51,7 @@ internal class SpotListRecyclerAdapter(val context: Context,var lists: List<Spot
     override fun onBindViewHolder(holder: SpotListRecyclerAdapter.ViewHolder, position: Int) {
         var itemList = lists[position]
         holder.itemNameView.text = itemList.itemName
+        holder.ratingBar.setRating(itemList.rating)
         //holder.itemImageView.setImageResource(itemList.itemImage)
         Glide.with(holder.itemView)
             .load(itemList.itemImage)

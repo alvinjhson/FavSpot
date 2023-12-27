@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -32,10 +33,11 @@ class CreateAndEditSpotList : AppCompatActivity() {
     lateinit var db : FirebaseFirestore
     lateinit var auth : FirebaseAuth
 
-
+    lateinit var ratingBar: RatingBar
     lateinit var faveSpotImageView : ImageView
     lateinit var nameEditText: EditText
     var currentId : String = ""
+    var userRating = 0f
     private var itemPosistion = POSISTION_NOT_SET
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         db = Firebase.firestore
         faveSpotImageView = findViewById(R.id.favSpotImageView)
         nameEditText = findViewById(R.id.nameEditText)
+        ratingBar = findViewById(R.id.addRatingBar)
         val saveButton = findViewById<ImageButton>(R.id.saveButton)
         val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
 
@@ -62,6 +65,10 @@ class CreateAndEditSpotList : AppCompatActivity() {
                 editItem(itemPosistion)
 
             }
+            ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+
+                editRating(itemPosistion)
+            }
 
             deleteButton.setOnClickListener {
 
@@ -74,6 +81,11 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
             }
         } else {
+            ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+            userRating = rating
+
+
+            }
 
         faveSpotImageView.setOnClickListener {
            chooseImage()
@@ -95,7 +107,8 @@ class CreateAndEditSpotList : AppCompatActivity() {
     }
     fun addName() {
         val name = nameEditText.text.toString()
-        val item = SpotList(name,"","")
+
+        val item = SpotList(name,"","",userRating)
         val user = auth.currentUser
         Log.d("!!!","current id $currentId")
         val id = currentId
@@ -104,20 +117,23 @@ class CreateAndEditSpotList : AppCompatActivity() {
             return
         }
         db.collection("users").document(user.uid).collection("items").document(id).update("itemName", item.itemName)
+        db.collection("users").document(user.uid).collection("items").document(id).update("rating", item.rating)
 
         val items = DataManager.item.find { it.id == id }
         if (items != null) {
             items.itemName = name
+            items.rating = userRating
         }
         finish()
     }
+
     fun displayItem(position : Int) {
         val item = DataManager.item[position]
+        ratingBar.setRating(item.rating)
         nameEditText.setText(item.itemName)
         Glide.with(this )
             .load(item.itemImage)
             .into(faveSpotImageView)
-
     }
 
 
@@ -152,12 +168,27 @@ class CreateAndEditSpotList : AppCompatActivity() {
         finish()
     }
 
+    fun editRating(position: Int) {
+        val user = auth.currentUser
+        DataManager.item[position].rating = ratingBar.rating
+        val id = DataManager.item[position].id
+        if (user != null) {
+            db.collection("users").document(user.uid).collection("items").document(id).set(DataManager.item[position])
+        }
+        //finish()
+    }
+
+
+
+
+
+
 
 
 
     fun uploadImage(file: Uri) {
         val name = nameEditText.text.toString()
-        val item = SpotList(name,"","")
+        val item = SpotList(name,"","",0.0f)
         val storageRef = FirebaseStorage.getInstance().reference.child("bilder")
         storageRef.putFile(file)
             .addOnSuccessListener {
