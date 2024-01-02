@@ -65,6 +65,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
             saveButton.setOnClickListener {
 
                 editItem(itemPosistion)
+                editDesc(itemPosistion)
 
             }
             ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
@@ -167,6 +168,15 @@ class CreateAndEditSpotList : AppCompatActivity() {
     fun editItem(position: Int) {
         val user = auth.currentUser
         DataManager.item[position].itemName = nameEditText.text.toString()
+        val id = DataManager.item[position].id
+        if (user != null) {
+            db.collection("users").document(user.uid).collection("items").document(id).set(DataManager.item[position])
+        }
+        finish()
+    }
+    fun editDesc(position: Int) {
+        val user = auth.currentUser
+        DataManager.item[position].itemDesc = descEditText.text.toString()
         val id = DataManager.item[position].id
         if (user != null) {
             db.collection("users").document(user.uid).collection("items").document(id).set(DataManager.item[position])
