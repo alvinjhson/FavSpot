@@ -36,6 +36,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
     lateinit var ratingBar: RatingBar
     lateinit var faveSpotImageView : ImageView
     lateinit var nameEditText: EditText
+    lateinit var descEditText: EditText
     var currentId : String = ""
     var userRating = 0f
     private var itemPosistion = POSISTION_NOT_SET
@@ -48,6 +49,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         db = Firebase.firestore
         faveSpotImageView = findViewById(R.id.favSpotImageView)
         nameEditText = findViewById(R.id.nameEditText)
+        descEditText = findViewById(R.id.descEditText)
         ratingBar = findViewById(R.id.addRatingBar)
         val saveButton = findViewById<ImageButton>(R.id.saveButton)
         val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
@@ -107,8 +109,9 @@ class CreateAndEditSpotList : AppCompatActivity() {
     }
     fun addName() {
         val name = nameEditText.text.toString()
+        val desc = descEditText.text.toString()
 
-        val item = SpotList(name,"","",userRating)
+        val item = SpotList(name,"","",userRating,desc)
         val user = auth.currentUser
         Log.d("!!!","current id $currentId")
         val id = currentId
@@ -118,11 +121,13 @@ class CreateAndEditSpotList : AppCompatActivity() {
         }
         db.collection("users").document(user.uid).collection("items").document(id).update("itemName", item.itemName)
         db.collection("users").document(user.uid).collection("items").document(id).update("rating", item.rating)
+        db.collection("users").document(user.uid).collection("items").document(id).update("itemDesc", item.itemDesc)
 
         val items = DataManager.item.find { it.id == id }
         if (items != null) {
             items.itemName = name
             items.rating = userRating
+            items.itemDesc = desc
         }
         finish()
     }
@@ -131,6 +136,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         val item = DataManager.item[position]
         ratingBar.setRating(item.rating)
         nameEditText.setText(item.itemName)
+        descEditText.setText(item.itemDesc)
         Glide.with(this )
             .load(item.itemImage)
             .into(faveSpotImageView)
@@ -188,7 +194,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
     fun uploadImage(file: Uri) {
         val name = nameEditText.text.toString()
-        val item = SpotList(name,"","",0.0f)
+        val item = SpotList(name,"","",0.0f,"")
         val storageRef = FirebaseStorage.getInstance().reference.child("bilder")
         storageRef.putFile(file)
             .addOnSuccessListener {
