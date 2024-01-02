@@ -132,8 +132,12 @@
 
     <RatingBar
         android:id="@+id/addRatingBar"
+        style="@style/CustomRatingBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
+        android:scaleX="0.5"
+        android:scaleY="0.5"
         app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="@+id/imageView4"
         app:layout_constraintStart_toStartOf="@+id/imageView4"
