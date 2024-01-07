@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.firestore
 
 class FavSpotactivity : AppCompatActivity() {
@@ -39,6 +40,9 @@ class FavSpotactivity : AppCompatActivity() {
 
 
 
+
+
+
         loadItems()
 
         taskAddButton.setOnClickListener {
@@ -48,6 +52,27 @@ class FavSpotactivity : AppCompatActivity() {
 
     }
 
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val user = auth.currentUser
+        if (user != null) {
+            Log.d("!!!","user not null")
+            db.collection("users")
+                .document(user.uid)
+                .collection("userInfo")
+                .document(user.uid)
+                .set(mapOf("rememberCheckBox" to false), SetOptions.merge())
+        } else {
+            Log.d("!!!","null")
+        }
+        DataManager.item.clear()
+        auth.signOut()
+        val intent = Intent(this,MainActivity::class.java)
+        startActivity(intent)
+
+
+    }
 
 
 
