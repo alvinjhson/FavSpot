@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
 
         getUserData()
-        //rememberCheckBox()
+
 
        autoSignIn()
         rememberCheckBox.setOnClickListener {
@@ -82,15 +82,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
-    /*
-    fun autoSignIn() {
-        val user = auth.currentUser
-        if (user != null &&   db.collection("users").document(user.uid).collection("userInfo")
-                .document(id).get(userCheckBox)) {
-            favSpotActivity()
-        }
-    }
-     */
+
     fun autoSignIn() {
         val user = auth.currentUser
         if (user != null) {
@@ -106,33 +98,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun rememberCheckBox() {
-       val checkBox = rememberCheckBox.isChecked
-        val user = auth.currentUser
-        val userCheckBox = UserInfo(checkBox,"")
-        if (user != null && checkBox == true ) {
-            db.collection("users").document(user.uid).collection("userInfo")
-                .get().addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        val item = document.toObject(UserInfo::class.java)
-                        if (item?.rememberCheckBox == true) {
-                            autoSignIn()
-                        } else {
-                            db.collection("users").document(user.uid)
-                                .collection("userInfo").add(userCheckBox).addOnSuccessListener { document ->
-                                    val id = document.id
-                                    //userCheckBox.id = id
-                                    db.collection("users").document(user.uid).collection("userInfo")
-                                        .document(id).set(userCheckBox)
-                                    DataManager.user.add(userCheckBox)
-                                }
-                        }
-                    }
-                }
 
-
-        }
-    }
 
     fun checkBox() {
 
