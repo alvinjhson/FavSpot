@@ -1,10 +1,14 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 
+
 }
+
 
 android {
     namespace = "com.example.favspot"
@@ -18,7 +22,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"]}\"")
+
     }
+
 
     buildTypes {
         release {
@@ -39,7 +46,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
 }
+
 
 dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
