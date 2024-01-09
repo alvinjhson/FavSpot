@@ -14,6 +14,7 @@ android {
     namespace = "com.example.favspot"
     compileSdk = 34
 
+
     defaultConfig {
         applicationId = "com.example.favspot"
         minSdk = 26
@@ -45,6 +46,8 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+
     }
 
 }
