@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -18,12 +19,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
+    private var lat: Double = 0.0
+    private var long: Double = 0.0
+    private var name: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+         lat = intent.getDoubleExtra("lat", 0.0)
+         long = intent.getDoubleExtra("long", 0.0)
+         name = intent.getStringExtra("name").toString()
+        Log.d("!!!", "Lat: $lat, Long: $long")
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -32,6 +41,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        // Flytta kameran till den mottagna positionen
+        val position = LatLng(lat, long)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 10f))
+
+        val marker = googleMap.addMarker(MarkerOptions().position(position).title("$name")) // Lägg till markören på kartan
 
         mMap.setOnMapLongClickListener { latLng ->
             // Här har du latitud och longitud för den plats användaren valde

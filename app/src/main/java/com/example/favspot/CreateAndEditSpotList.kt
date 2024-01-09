@@ -290,6 +290,18 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
     fun addLocation() {
         val intent = Intent(this,MapsActivity::class.java)
+
+        if (itemPosistion != POSISTION_NOT_SET) {
+            var lat = latitudeTextView.text.toString().toDouble()
+            var long = longitudeTextView.text.toString().toDouble()
+            var name = nameEditText.text.toString()
+            Log.d("!!!", "Latr: $lat, Longr: $long , name $name")
+            intent.putExtra("lat", lat)
+            intent.putExtra("long", long)
+            intent.putExtra("name", name)
+
+
+        }
         startActivityForResult(intent, REQUEST_CODE_CHOOSE_LOCATION)
 
     }
