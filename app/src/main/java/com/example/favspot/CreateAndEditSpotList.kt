@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,7 +26,8 @@ import com.google.firebase.storage.FirebaseStorage
 const val ITEM_POSISTION_KEY = "ITEM_POSISTION"
 
 const val POSISTION_NOT_SET = -1
-const val REQUEST_CODE = 0
+const val REQUEST_CODE_CHOOSE_IMAGE = 0
+const val REQUEST_CODE_CHOOSE_LOCATION = 1
 
 
 class CreateAndEditSpotList : AppCompatActivity() {
@@ -37,6 +39,8 @@ class CreateAndEditSpotList : AppCompatActivity() {
     lateinit var faveSpotImageView : ImageView
     lateinit var nameEditText: EditText
     lateinit var descEditText: EditText
+    lateinit var latitudeTextView : TextView
+    lateinit var longitudeTextView : TextView
     var currentId : String = ""
     var userRating = 0f
     private var itemPosistion = POSISTION_NOT_SET
@@ -51,8 +55,11 @@ class CreateAndEditSpotList : AppCompatActivity() {
         nameEditText = findViewById(R.id.nameEditText)
         descEditText = findViewById(R.id.descEditText)
         ratingBar = findViewById(R.id.addRatingBar)
+        latitudeTextView = findViewById(R.id.latitudeTextView)
+        longitudeTextView = findViewById(R.id.longitudeTextView)
         val saveButton = findViewById<ImageButton>(R.id.saveButton)
         val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
+        val googleMapButton = findViewById<ImageButton>(R.id.googleMapImageButton)
 
 
         //val itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
@@ -89,6 +96,10 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
 
             }
+            googleMapButton.setOnClickListener{
+                addLocation()
+
+            }
 
         faveSpotImageView.setOnClickListener {
            chooseImage()
@@ -101,18 +112,32 @@ class CreateAndEditSpotList : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.data != null) {
+        if (requestCode == REQUEST_CODE_CHOOSE_IMAGE && resultCode == RESULT_OK && data != null && data.data != null) {
             val filePath = data.data
             if (filePath != null) {
                 uploadImage(filePath)
             }
         }
+
+        if (requestCode == REQUEST_CODE_CHOOSE_LOCATION && resultCode == RESULT_OK && data != null ) {
+            val latitude = data?.getDoubleExtra("latitude", 0.0)
+            val longitude = data?.getDoubleExtra("longitude", 0.0)
+
+            if (latitude != null && longitude != null) {
+                    uploadLocation(latitude,longitude)
+            }
+        }
+
+
     }
     fun addName() {
         val name = nameEditText.text.toString()
         val desc = descEditText.text.toString()
+        val latitude = latitudeTextView.text.toString()
+        val longitude = longitudeTextView.text.toString()
 
-        val item = SpotList(name,"","",userRating,desc)
+
+        val item = SpotList(name,"","",userRating,desc,latitude.toDouble(),longitude.toDouble())
         val user = auth.currentUser
         Log.d("!!!","current id $currentId")
         val id = currentId
@@ -123,7 +148,8 @@ class CreateAndEditSpotList : AppCompatActivity() {
         db.collection("users").document(user.uid).collection("items").document(id).update("itemName", item.itemName)
         db.collection("users").document(user.uid).collection("items").document(id).update("rating", item.rating)
         db.collection("users").document(user.uid).collection("items").document(id).update("itemDesc", item.itemDesc)
-
+        db.collection("users").document(user.uid).collection("items").document(id).update("latitude", item.latitude)
+        db.collection("users").document(user.uid).collection("items").document(id).update("longitude", item.longitude)
         val items = DataManager.item.find { it.id == id }
         if (items != null) {
             items.itemName = name
@@ -162,7 +188,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
     fun chooseImage() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
-        startActivityForResult(intent, REQUEST_CODE)
+        startActivityForResult(intent, REQUEST_CODE_CHOOSE_IMAGE)
     }
 
     fun editItem(position: Int) {
@@ -204,7 +230,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
     fun uploadImage(file: Uri) {
         val name = nameEditText.text.toString()
-        val item = SpotList(name,"","",0.0f,"")
+        val item = SpotList(name,"","",0.0f,"",0.0,0.0)
         val storageRef = FirebaseStorage.getInstance().reference.child("bilder")
         storageRef.putFile(file)
             .addOnSuccessListener {
@@ -252,4 +278,40 @@ class CreateAndEditSpotList : AppCompatActivity() {
                     Toast.LENGTH_SHORT).show()
             }
     }
+
+    fun addLocation() {
+        val intent = Intent(this,MapsActivity::class.java)
+        startActivityForResult(intent, REQUEST_CODE_CHOOSE_LOCATION)
+
+    }
+    fun uploadLocation(latitude : Double,longitude : Double) {
+        latitudeTextView.text = latitude.toString()
+        longitudeTextView.text = longitude.toString()
+        val item = SpotList("","","",0.0f,"",latitude,longitude)
+
+        val user = auth.currentUser
+        Log.d("!!!","current id $currentId")
+        val id = currentId
+
+        if (user == null) {
+            return
+        }
+        Log.d("!!!","It Works")
+       // db.collection("users").document(user.uid).collection("items").document(id).update("latitude", item.latitude)
+       // db.collection("users").document(user.uid).collection("items").document(id).update("longitude", item.longitude)
+       // Log.d("!!!", "Latitude är: $latitude och Longitude är: $longitude")
+       // val items = DataManager.item.find { it.id == id }
+       // if (items != null) {
+        //    items.latitude = latitude
+        //    items.longitude = longitude
+
+       // }
+
+
+
+
+    }
+
+
+
 }
