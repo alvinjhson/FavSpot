@@ -90,6 +90,9 @@ class CreateAndEditSpotList : AppCompatActivity() {
                 chooseImage()
 
             }
+            googleMapButton.setOnClickListener {
+                addLocation()
+            }
         } else {
             ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             userRating = rating
@@ -155,6 +158,8 @@ class CreateAndEditSpotList : AppCompatActivity() {
             items.itemName = name
             items.rating = userRating
             items.itemDesc = desc
+            items.latitude = latitude.toDouble()
+            items.longitude = longitude.toDouble()
         }
         finish()
     }
@@ -164,6 +169,10 @@ class CreateAndEditSpotList : AppCompatActivity() {
         ratingBar.setRating(item.rating)
         nameEditText.setText(item.itemName)
         descEditText.setText(item.itemDesc)
+        longitudeTextView.setText(item.longitude.toString())
+        latitudeTextView.setText(item.latitude.toString())
+
+
         Glide.with(this )
             .load(item.itemImage)
             .into(faveSpotImageView)
@@ -285,18 +294,40 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
     }
     fun uploadLocation(latitude : Double,longitude : Double) {
-        latitudeTextView.text = latitude.toString()
-        longitudeTextView.text = longitude.toString()
-        val item = SpotList("","","",0.0f,"",latitude,longitude)
+        if (itemPosistion == POSISTION_NOT_SET) {
+            latitudeTextView.text = latitude.toString()
+            longitudeTextView.text = longitude.toString()
+            val item = SpotList("", "", "", 0.0f, "", latitude, longitude)
 
-        val user = auth.currentUser
-        Log.d("!!!","current id $currentId")
-        val id = currentId
+            val user = auth.currentUser
+            Log.d("!!!", "current id $currentId")
+            val id = currentId
 
-        if (user == null) {
-            return
+            if (user == null) {
+                return
+            }
+            Log.d("!!!", "It Works")
+        } else {
+
+            val user = auth.currentUser
+            DataManager.item[itemPosistion].longitude = longitude  //longitudeTextView.text.toString().toDouble()
+            DataManager.item[itemPosistion].latitude = latitude //latitudeTextView.text.toString().toDouble()
+            val id = DataManager.item[itemPosistion].id
+            Log.d("!!!", "current id $id")
+            if (user != null) {
+                db.collection("users").document(user.uid).collection("items").document(id)
+                    .update("latitude", DataManager.item[itemPosistion].latitude)
+                db.collection("users").document(user.uid).collection("items").document(id)
+                    .update("longitude", DataManager.item[itemPosistion].longitude)
+            }
+            latitudeTextView.text = latitude.toString()
+            longitudeTextView.text = longitude.toString()
+
+
+
+
+
         }
-        Log.d("!!!","It Works")
        // db.collection("users").document(user.uid).collection("items").document(id).update("latitude", item.latitude)
        // db.collection("users").document(user.uid).collection("items").document(id).update("longitude", item.longitude)
        // Log.d("!!!", "Latitude är: $latitude och Longitude är: $longitude")
