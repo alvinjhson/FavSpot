@@ -6,8 +6,23 @@
     android:layout_height="match_parent"
     android:background="#43C59E"
     tools:context=".CreateAndEditSpotList"
-    tools:layout_editor_absoluteX="-1dp"
-    tools:layout_editor_absoluteY="-20dp">
+    tools:layout_editor_absoluteX="-7dp"
+    tools:layout_editor_absoluteY="8dp">
+
+    <TextView
+        android:id="@+id/latitudeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_extralight"
+        android:text="Latitude"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/longitudeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.087"
+        app:layout_constraintStart_toEndOf="@+id/googleMapImageButton"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -36,7 +51,7 @@
         android:id="@+id/imageView3"
         android:layout_width="185dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="4dp"
         android:src="@drawable/rectangle_3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,11 +61,12 @@
         android:id="@+id/backImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#43C59E"
         android:src="@drawable/arrow_2__1_"
 
         app:layout_constraintEnd_toStartOf="@+id/imageView3"
+        app:layout_constraintHorizontal_bias="0.043"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,8 +77,8 @@
         android:background="@drawable/underlinecolor"
         android:ems="10"
         android:fontFamily="@font/inter_light"
-        android:hint="Spot name"
         android:gravity="center"
+        android:hint="Spot name"
         android:inputType="text"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -72,13 +88,13 @@
         app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.416" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="374dp"
-        android:layout_height="340dp"
-        android:layout_marginBottom="64dp"
+        android:layout_width="399dp"
+        android:layout_height="321dp"
+        android:layout_marginBottom="48dp"
         android:src="@drawable/rectangle_4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,7 +111,7 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView4"
         app:layout_constraintStart_toStartOf="@+id/imageView4"
         app:layout_constraintTop_toTopOf="@+id/imageView4"
-        app:layout_constraintVertical_bias="0.975" />
+        app:layout_constraintVertical_bias="0.95" />
 
     <TextView
         android:id="@+id/textView3"
@@ -110,7 +126,7 @@
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="@+id/imageView5"
-        app:layout_constraintVertical_bias="0.085" />
+        app:layout_constraintVertical_bias="0.084" />
 
     <ImageButton
         android:id="@+id/saveButton"
@@ -143,14 +159,14 @@
         style="@style/CustomRatingBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         android:scaleX="0.5"
         android:scaleY="0.5"
         app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="@+id/imageView4"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView4"
-        app:layout_constraintTop_toTopOf="@+id/imageView4"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/descEditText"
@@ -169,5 +185,34 @@
         app:layout_constraintStart_toStartOf="@+id/imageView5"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/googleMapImageButton"
+        android:layout_width="40dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="28dp"
+        android:backgroundTint="#43C59E"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/addRatingBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/baseline_add_location_alt_24" />
+
+    <TextView
+        android:id="@+id/longitudeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="180dp"
+        android:fontFamily="@font/inter_extralight"
+        android:text="Longitude"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintStart_toEndOf="@+id/googleMapImageButton"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

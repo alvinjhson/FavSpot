@@ -8,12 +8,16 @@ class SpotList() {
     var id: String = ""
     var rating:Float = 0.0f
     var itemDesc: String = ""
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
 
-    constructor(itemName: String, itemImage: String, id: String,rating: Float,itemDesc: String) : this() {
+    constructor(itemName: String, itemImage: String, id: String,rating: Float,itemDesc: String, latitude: Double, longitude: Double) : this() {
         this.itemName = itemName
         this.itemImage = itemImage
         this.id = id
         this.rating = rating
         this.itemDesc = itemDesc
+        this.latitude = latitude
+        this.longitude = longitude
     }
 }
