@@ -1,4 +1,6 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-/android/app/src/main/AndroidManifest.xml
+
+
+**/AndroidManifest.xml
