@@ -5,6 +5,7 @@ import android.media.Image
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -61,9 +62,17 @@ class CreateAndEditSpotList : AppCompatActivity() {
         val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
         val googleMapButton = findViewById<ImageButton>(R.id.googleMapImageButton)
 
+        val backButton = findViewById<ImageButton>(R.id.backImageButton)
+        val maxLength = 8
+        setCharacterLimit(latitudeTextView,maxLength)
+        setCharacterLimit(longitudeTextView,maxLength)
 
         //val itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
         itemPosistion = intent.getIntExtra(ITEM_POSISTION_KEY, POSISTION_NOT_SET)
+
+        backButton.setOnClickListener {
+            finish()
+        }
 
 
         if (itemPosistion != POSISTION_NOT_SET) {
@@ -85,6 +94,9 @@ class CreateAndEditSpotList : AppCompatActivity() {
                 removeItem(itemPosistion)
 
             }
+            //publish.setOnClickListener {
+            //    publish(itemPosistion)
+            //}
             faveSpotImageView.setOnClickListener {
                 //changeImage(itemPosistion)
                 chooseImage()
@@ -132,6 +144,11 @@ class CreateAndEditSpotList : AppCompatActivity() {
         }
 
 
+    }
+    fun setCharacterLimit(textView: TextView, maxLength: Int) {
+        val inputFilters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxLength))
+
+        textView.filters = inputFilters
     }
     fun addName() {
         val name = nameEditText.text.toString()
@@ -228,6 +245,18 @@ class CreateAndEditSpotList : AppCompatActivity() {
         }
         //finish()
     }
+    /*
+    fun publish(position: Int) {
+        val user = auth.currentUser
+        DataManager.item[position].isPublic = !DataManager.item[position].isPublic
+        val id = DataManager.item[position].id
+        if (user != null) {
+            db.collection("users").document(user.uid).collection("items").document(id)
+                .update("isPublic", DataManager.item[itemPosistion].isPublic)
+        }
+    }
+
+     */
 
 
 
