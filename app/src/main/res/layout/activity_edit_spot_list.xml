@@ -11,15 +11,16 @@
 
     <ImageButton
         android:id="@+id/googleMapImageButton"
-        android:layout_width="60dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="4dp"
+        android:layout_width="60sp"
+        android:layout_height="80sp"
         android:backgroundTint="#43C59E"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/addRatingBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.474"
         app:srcCompat="@drawable/baseline_add_location_alt_24" />
 
     <TextView
@@ -31,12 +32,12 @@
         android:text="Longitude:"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/longitudeTextView"
+        app:layout_constraintBottom_toTopOf="@+id/addRatingBar"
         app:layout_constraintEnd_toStartOf="@+id/longitudeTextView"
-        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/googleMapImageButton"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.717" />
 
     <TextView
         android:id="@+id/longitudeTextView2"
@@ -49,16 +50,16 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/imageView4"
         app:layout_constraintEnd_toStartOf="@+id/latitudeTextView"
-        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintHorizontal_bias="0.235"
         app:layout_constraintStart_toEndOf="@+id/googleMapImageButton"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.3" />
 
     <TextView
         android:id="@+id/latitudeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="124dp"
+        android:layout_marginEnd="108dp"
         android:fontFamily="@font/inter_extralight"
         android:text="00.00000"
         android:textColor="#FFFFFF"
@@ -66,7 +67,7 @@
         app:layout_constraintBottom_toTopOf="@+id/imageView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.110000014" />
+        app:layout_constraintVertical_bias="0.32999998" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -136,14 +137,13 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="399dp"
-        android:layout_height="321dp"
-        android:layout_marginBottom="48dp"
+        android:layout_width="0dp"
+        android:layout_height="321sp"
         android:src="@drawable/rectangle_4"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
 
+        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -180,9 +180,7 @@
         android:src="@drawable/baseline_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/deleteImageButton"
@@ -241,6 +239,6 @@
         app:layout_constraintBottom_toTopOf="@+id/imageView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.708" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
