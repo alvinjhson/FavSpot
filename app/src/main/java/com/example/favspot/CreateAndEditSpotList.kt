@@ -269,7 +269,8 @@ class CreateAndEditSpotList : AppCompatActivity() {
     fun uploadImage(file: Uri) {
         val name = nameEditText.text.toString()
         val item = SpotList(name,"","",0.0f,"",0.0,0.0)
-        val storageRef = FirebaseStorage.getInstance().reference.child("bilder")
+        val uniqueID = System.currentTimeMillis().toString()
+       val storageRef = FirebaseStorage.getInstance().reference.child("bilder/$uniqueID")
         storageRef.putFile(file)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
