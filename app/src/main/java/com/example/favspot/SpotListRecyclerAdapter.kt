@@ -57,6 +57,8 @@ internal class SpotListRecyclerAdapter(val context: Context,var lists: List<Spot
             .load(itemList.itemImage)
             .into(holder.itemImageView)
         holder.itemPosistion = position
+        Log.d("!!!", "onBindViewHolder called, itemPosistion is now $position")
+
     }
 
     override fun getItemCount(): Int {

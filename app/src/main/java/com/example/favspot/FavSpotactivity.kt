@@ -1,12 +1,14 @@
 package com.example.favspot
 
 import android.content.Intent
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +36,7 @@ class FavSpotactivity : AppCompatActivity() {
     lateinit var auth : FirebaseAuth
     lateinit var favspot : TextView
     lateinit var rectangleImageView : ImageView
+    lateinit var ratingBar : RatingBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fav_spot)
@@ -46,13 +49,21 @@ class FavSpotactivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = SpotListRecyclerAdapter(this,DataManager.item)
         val taskAddButton = findViewById<FloatingActionButton>(R.id.addFloatingButton)
-
-
-
+        val publicRecycle = findViewById<ImageButton>(R.id.publicRecycleImageButton)
+        val homeButton = findViewById<ImageButton>(R.id.homeImageButton)
 
 
 
         loadItems()
+
+        publicRecycle.setOnClickListener {
+            showUserPublicFavSpot()
+
+        }
+        homeButton.setOnClickListener {
+            loadItems()
+
+        }
 
         taskAddButton.setOnClickListener {
             val intent = Intent(this,CreateAndEditSpotList::class.java)
@@ -83,14 +94,31 @@ class FavSpotactivity : AppCompatActivity() {
 
     }
 
+    fun showUserPublicFavSpot() {
+        DataManager.item.clear()
+
+        db.collection("items").whereEqualTo("public", true).get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                val item = document.toObject(SpotList::class.java)
+                DataManager.item.add(item)
+            }
+            recyclerView.adapter?.notifyDataSetChanged()
+        }
+
+
+    }
+
+
+
 
 
     fun loadItems() {
+        DataManager.item.clear()
         val user = auth.currentUser
         if (user == null) {
             return
         }
-        db.collection("users").document(user.uid).collection("items").get().addOnSuccessListener { documents ->
+        db.collection("items").whereEqualTo("userId", user.uid).get().addOnSuccessListener { documents ->
             for (document in documents) {
                 val item = document.toObject(SpotList::class.java)
                 DataManager.item.add(item)

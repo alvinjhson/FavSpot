@@ -10,8 +10,10 @@ class SpotList() {
     var itemDesc: String = ""
     var latitude: Double = 0.0
     var longitude: Double = 0.0
+    var public: Boolean = false
+    var userId: String = ""
 
-    constructor(itemName: String, itemImage: String, id: String,rating: Float,itemDesc: String, latitude: Double, longitude: Double) : this() {
+    constructor(itemName: String, itemImage: String, id: String,rating: Float,itemDesc: String, latitude: Double, longitude: Double,public: Boolean,userId: String) : this() {
         this.itemName = itemName
         this.itemImage = itemImage
         this.id = id
@@ -19,5 +21,7 @@ class SpotList() {
         this.itemDesc = itemDesc
         this.latitude = latitude
         this.longitude = longitude
+        this.public = public
+        this.userId = userId
     }
 }

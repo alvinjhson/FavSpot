@@ -61,6 +61,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         val saveButton = findViewById<ImageButton>(R.id.saveButton)
         val deleteButton = findViewById<ImageButton>(R.id.deleteImageButton)
         val googleMapButton = findViewById<ImageButton>(R.id.googleMapImageButton)
+        val publishButton = findViewById<ImageButton>(R.id.publishImagebutton)
 
         val backButton = findViewById<ImageButton>(R.id.backImageButton)
         val maxLength = 8
@@ -77,34 +78,45 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
         if (itemPosistion != POSISTION_NOT_SET) {
             displayItem(itemPosistion)
+            val user = auth.currentUser
+            val userId = DataManager.item[itemPosistion].userId
+            if (user != null && user.uid == userId ) {
+                saveButton.setOnClickListener {
 
-            saveButton.setOnClickListener {
+                    editItem(itemPosistion)
+                    editDesc(itemPosistion)
 
-                editItem(itemPosistion)
-                editDesc(itemPosistion)
+                }
+                ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+
+                    editRating(itemPosistion)
+                }
+
+                deleteButton.setOnClickListener {
+
+                    removeItem(itemPosistion)
+
+                }
+                publishButton.setOnClickListener {
+                    publish(itemPosistion)
+                }
+                faveSpotImageView.setOnClickListener {
+                    //changeImage(itemPosistion)
+                    chooseImage()
+
+                }
+
+                googleMapButton.setOnClickListener {
+                    addLocation()
+                }
+            }else {
+                googleMapButton.setOnClickListener {
+
+                    showLocation()
+                }
 
             }
-            ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
 
-                editRating(itemPosistion)
-            }
-
-            deleteButton.setOnClickListener {
-
-                removeItem(itemPosistion)
-
-            }
-            //publish.setOnClickListener {
-            //    publish(itemPosistion)
-            //}
-            faveSpotImageView.setOnClickListener {
-                //changeImage(itemPosistion)
-                chooseImage()
-
-            }
-            googleMapButton.setOnClickListener {
-                addLocation()
-            }
         } else {
             ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             userRating = rating
@@ -157,7 +169,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         val longitude = longitudeTextView.text.toString()
 
 
-        val item = SpotList(name,"","",userRating,desc,latitude.toDouble(),longitude.toDouble())
+        val item = SpotList(name,"","",userRating,desc,latitude.toDouble(),longitude.toDouble(),false,"")
         val user = auth.currentUser
         Log.d("!!!","current id $currentId")
         val id = currentId
@@ -165,11 +177,11 @@ class CreateAndEditSpotList : AppCompatActivity() {
         if (user == null) {
             return
         }
-        db.collection("users").document(user.uid).collection("items").document(id).update("itemName", item.itemName)
-        db.collection("users").document(user.uid).collection("items").document(id).update("rating", item.rating)
-        db.collection("users").document(user.uid).collection("items").document(id).update("itemDesc", item.itemDesc)
-        db.collection("users").document(user.uid).collection("items").document(id).update("latitude", item.latitude)
-        db.collection("users").document(user.uid).collection("items").document(id).update("longitude", item.longitude)
+        db.collection("items").document(id).update("itemName", item.itemName)
+        db.collection("items").document(id).update("rating", item.rating)
+        db.collection("items").document(id).update("itemDesc", item.itemDesc)
+        db.collection("items").document(id).update("latitude", item.latitude)
+        db.collection("items").document(id).update("longitude", item.longitude)
         val items = DataManager.item.find { it.id == id }
         if (items != null) {
             items.itemName = name
@@ -203,7 +215,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         if (user == null) {
             return
         }
-        db.collection("users").document(user.uid).collection("items").document(itemId).delete()
+        db.collection("items").document(itemId).delete()
         removeItemFromFirestore(itemId)
         DataManager.item.removeAt(position)
         finish()
@@ -222,7 +234,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         DataManager.item[position].itemName = nameEditText.text.toString()
         val id = DataManager.item[position].id
         if (user != null) {
-            db.collection("users").document(user.uid).collection("items").document(id).set(DataManager.item[position])
+            db.collection("items").document(id).set(DataManager.item[position])
         }
         finish()
     }
@@ -231,7 +243,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
         DataManager.item[position].itemDesc = descEditText.text.toString()
         val id = DataManager.item[position].id
         if (user != null) {
-            db.collection("users").document(user.uid).collection("items").document(id).set(DataManager.item[position])
+            db.collection("items").document(id).set(DataManager.item[position])
         }
         finish()
     }
@@ -240,23 +252,25 @@ class CreateAndEditSpotList : AppCompatActivity() {
         val user = auth.currentUser
         DataManager.item[position].rating = ratingBar.rating
         val id = DataManager.item[position].id
-        if (user != null) {
-            db.collection("users").document(user.uid).collection("items").document(id).set(DataManager.item[position])
+        val userId = DataManager.item[position].userId
+        if (user != null && user.uid == userId ) {
+            db.collection("items").document(id).set(DataManager.item[position])
         }
         //finish()
     }
-    /*
+
     fun publish(position: Int) {
         val user = auth.currentUser
-        DataManager.item[position].isPublic = !DataManager.item[position].isPublic
+        DataManager.item[position].public = !DataManager.item[position].public
         val id = DataManager.item[position].id
         if (user != null) {
-            db.collection("users").document(user.uid).collection("items").document(id)
-                .update("isPublic", DataManager.item[itemPosistion].isPublic)
+            db.collection("items").document(id)
+                .update("public", DataManager.item[position].public)
         }
     }
 
-     */
+
+
 
 
 
@@ -268,7 +282,7 @@ class CreateAndEditSpotList : AppCompatActivity() {
 
     fun uploadImage(file: Uri) {
         val name = nameEditText.text.toString()
-        val item = SpotList(name,"","",0.0f,"",0.0,0.0)
+        val item = SpotList(name,"","",0.0f,"",0.0,0.0,false,"")
         val uniqueID = System.currentTimeMillis().toString()
        val storageRef = FirebaseStorage.getInstance().reference.child("bilder/$uniqueID")
         storageRef.putFile(file)
@@ -287,28 +301,26 @@ class CreateAndEditSpotList : AppCompatActivity() {
                         val user = auth.currentUser
                         if (user != null) {
                             item.itemImage = uri.toString() // Sätter URL:en till bilden
-                            db.collection("users").document(user.uid)
-                                .collection("items").add(item).addOnSuccessListener { document ->
-                                    val id = document.id
-                                    currentId = id
-                                    Log.d("!!!", "current id $currentId")
-                                    item.id = id
-                                    db.collection("users").document(user.uid).collection("items")
-                                        .document(id).set(item)
-                                    DataManager.item.add(item)
-                                }
+                            item.userId = user.uid // Lägger till userId till "item"
+                            db.collection("items").add(item).addOnSuccessListener { document ->
+                                val id = document.id
+                                currentId = id
+                                Log.d("!!!", "current id $currentId")
+                                item.id = id
+                                db.collection("items").document(id).set(item)
+                                DataManager.item.add(item)
+                                itemPosistion = DataManager.item.size - 1
+                            }
                         }
-                    }else {
-
-                            val user = auth.currentUser
-                              DataManager.item[itemPosistion].itemImage = uri.toString()
+                    } else {
+                        val user = auth.currentUser
+                        if (user != null) {
+                            DataManager.item[itemPosistion].itemImage = uri.toString()
                             val id = DataManager.item[itemPosistion].id
                             Log.d("!!!", "current id $id")
-                            if (user != null) {
-                                db.collection("users").document(user.uid).collection("items").document(id)
-                                    .update("itemImage", DataManager.item[itemPosistion].itemImage)
-                            }
-
+                            db.collection("items").document(id)
+                                .set(DataManager.item[itemPosistion], SetOptions.merge())
+                        }
                     }
                 }
             }
@@ -335,11 +347,25 @@ class CreateAndEditSpotList : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_CHOOSE_LOCATION)
 
     }
+    fun showLocation() {
+        val intent = Intent(this,MapsActivity::class.java)
+
+        var lat = latitudeTextView.text.toString().toDouble()
+        var long = longitudeTextView.text.toString().toDouble()
+        var name = nameEditText.text.toString()
+        Log.d("!!!", "Latr: $lat, Longr: $long , name $name")
+        intent.putExtra("lat", lat)
+        intent.putExtra("long", long)
+        intent.putExtra("name", name)
+        startActivity(intent)
+
+
+    }
     fun uploadLocation(latitude : Double,longitude : Double) {
         if (itemPosistion == POSISTION_NOT_SET) {
             latitudeTextView.text = latitude.toString()
             longitudeTextView.text = longitude.toString()
-            val item = SpotList("", "", "", 0.0f, "", latitude, longitude)
+            val item = SpotList("", "", "", 0.0f, "", latitude, longitude,false,"")
 
             val user = auth.currentUser
             Log.d("!!!", "current id $currentId")
@@ -349,21 +375,21 @@ class CreateAndEditSpotList : AppCompatActivity() {
                 return
             }
             Log.d("!!!", "It Works")
-        } else {
-
+        }else {
             val user = auth.currentUser
-            DataManager.item[itemPosistion].longitude = longitude  //longitudeTextView.text.toString().toDouble()
-            DataManager.item[itemPosistion].latitude = latitude //latitudeTextView.text.toString().toDouble()
+            DataManager.item[itemPosistion].longitude = longitude
+            DataManager.item[itemPosistion].latitude = latitude
             val id = DataManager.item[itemPosistion].id
             Log.d("!!!", "current id $id")
             if (user != null) {
-                db.collection("users").document(user.uid).collection("items").document(id)
+                db.collection("items").document(id)
                     .update("latitude", DataManager.item[itemPosistion].latitude)
-                db.collection("users").document(user.uid).collection("items").document(id)
+                db.collection("items").document(id)
                     .update("longitude", DataManager.item[itemPosistion].longitude)
             }
             latitudeTextView.text = latitude.toString()
             longitudeTextView.text = longitude.toString()
+
 
 
 
