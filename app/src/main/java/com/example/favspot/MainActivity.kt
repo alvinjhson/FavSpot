@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -34,27 +35,19 @@ class MainActivity : AppCompatActivity() {
         val signInButton = findViewById<Button>(R.id.signInButton)
         val signUpButton = findViewById<Button>(R.id.signUpButton)
 
-
-
         getUserData()
 
+        autoSignIn()
 
-       autoSignIn()
         rememberCheckBox.setOnClickListener {
             checkBox()
         }
-
         signInButton.setOnClickListener {
             signIn()
-
-
         }
         signUpButton.setOnClickListener {
             signUp()
-
         }
-
-
     }
 
     fun favSpotActivity() {
@@ -64,21 +57,19 @@ class MainActivity : AppCompatActivity() {
     fun signIn() {
         val email = emailView.text.toString()
         val password = passwordView.text.toString()
-
         if (email.isEmpty() || password.isEmpty()) {
             return
         }
-
         auth.signInWithEmailAndPassword(email,password)
             .addOnCompleteListener{
                     task ->
                 if (task.isSuccessful) {
-                    Log.d("!!!","sgned in")
+                    Toast.makeText(this,"Signed in",Toast.LENGTH_LONG).show()
                     checkBox()
                    favSpotActivity()
-
                 } else {
-                    Log.d("!!!","not signed in: ${task.exception}")
+                    Toast.makeText(this,"Wrong password or email",Toast.LENGTH_LONG).show()
+
                 }
             }
     }
@@ -105,16 +96,13 @@ class MainActivity : AppCompatActivity() {
         var checkBox = rememberCheckBox.isChecked
         val userCheckBox = UserInfo(checkBox,"")
         val users = auth.currentUser
-        Log.d("!!!","current user $users")
         if (users != null) {
             db.collection("users")
                 .document(users.uid)
                 .collection("userInfo")
                 .document(users.uid)
                 .set(mapOf("rememberCheckBox" to userCheckBox.rememberCheckBox), SetOptions.merge())
-
         } else {
-            Log.d("!!!","null")
         }
     }
     fun getUserData() {
@@ -130,26 +118,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     fun signUp() {
         val email = emailView.text.toString()
         val password = passwordView.text.toString()
-
         if (email.isEmpty() || password.isEmpty()) {
             return
         }
-
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener{
                     task ->
                 if (task.isSuccessful) {
                     Log.d("!!!","create sucess")
+                    Toast.makeText(this,"Create success",Toast.LENGTH_LONG).show()
                     favSpotActivity()
 
                 } else {
-                    Log.d("!!!","not created: ${task.exception}")
+                    Toast.makeText(this,"Not created",Toast.LENGTH_LONG).show()
                 }
             }
-
     }
 }

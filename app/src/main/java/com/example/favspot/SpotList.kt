@@ -4,7 +4,7 @@ import android.widget.ImageView
 
 class SpotList() {
     var itemName: String = ""
-    var itemImage: String = ""  // Ändra detta till ett lämpligt defaultvärde
+    var itemImage: String = ""
     var id: String = ""
     var rating:Float = 0.0f
     var itemDesc: String = ""
