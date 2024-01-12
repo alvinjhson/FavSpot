@@ -29,7 +29,6 @@ internal class SpotListRecyclerAdapter(val context: Context,var lists: List<Spot
         var ratingBar = itemView.findViewById<RatingBar>(R.id.ratingBar)
         var itemPosistion = 0
 
-
         init {
             itemView.setOnClickListener {
                 val intent = Intent(context,CreateAndEditSpotList::class.java)
@@ -38,8 +37,6 @@ internal class SpotListRecyclerAdapter(val context: Context,var lists: List<Spot
             }
 
         }
-
-
 
     }
 
@@ -52,7 +49,6 @@ internal class SpotListRecyclerAdapter(val context: Context,var lists: List<Spot
         var itemList = lists[position]
         holder.itemNameView.text = itemList.itemName
         holder.ratingBar.setRating(itemList.rating)
-        //holder.itemImageView.setImageResource(itemList.itemImage)
         Glide.with(holder.itemView)
             .load(itemList.itemImage)
             .into(holder.itemImageView)

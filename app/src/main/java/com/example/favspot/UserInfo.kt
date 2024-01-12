@@ -8,6 +8,4 @@ class UserInfo() {
         this.rememberCheckBox = rememberCheckBox
         this.id = id
     }
-
-
 }

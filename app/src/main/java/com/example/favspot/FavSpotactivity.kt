@@ -40,6 +40,7 @@ class FavSpotactivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fav_spot)
+
         db = Firebase.firestore
         auth = Firebase.auth
 
@@ -48,55 +49,42 @@ class FavSpotactivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = SpotListRecyclerAdapter(this,DataManager.item)
+
         val taskAddButton = findViewById<FloatingActionButton>(R.id.addFloatingButton)
         val publicRecycle = findViewById<ImageButton>(R.id.publicRecycleImageButton)
         val homeButton = findViewById<ImageButton>(R.id.homeImageButton)
-
-
 
         loadItems()
 
         publicRecycle.setOnClickListener {
             showUserPublicFavSpot()
-
         }
         homeButton.setOnClickListener {
             loadItems()
-
         }
-
         taskAddButton.setOnClickListener {
             val intent = Intent(this,CreateAndEditSpotList::class.java)
             startActivity(intent)
         }
-
     }
-
-
     override fun onBackPressed() {
         super.onBackPressed()
         val user = auth.currentUser
         if (user != null) {
-            Log.d("!!!","user not null")
             db.collection("users")
                 .document(user.uid)
                 .collection("userInfo")
                 .document(user.uid)
                 .set(mapOf("rememberCheckBox" to false), SetOptions.merge())
         } else {
-            Log.d("!!!","null")
         }
         DataManager.item.clear()
         auth.signOut()
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
-
-
     }
-
     fun showUserPublicFavSpot() {
         DataManager.item.clear()
-
         db.collection("items").whereEqualTo("public", true).get().addOnSuccessListener { documents ->
             for (document in documents) {
                 val item = document.toObject(SpotList::class.java)
@@ -104,14 +92,7 @@ class FavSpotactivity : AppCompatActivity() {
             }
             recyclerView.adapter?.notifyDataSetChanged()
         }
-
-
     }
-
-
-
-
-
     fun loadItems() {
         DataManager.item.clear()
         val user = auth.currentUser
@@ -136,8 +117,5 @@ class FavSpotactivity : AppCompatActivity() {
         taskAddButton.startAnimation(addBtAnim)
         rectangleImageView.startAnimation(addBtAnim)
         favspot.startAnimation(addBtAnim)
-
-
-
     }
 }

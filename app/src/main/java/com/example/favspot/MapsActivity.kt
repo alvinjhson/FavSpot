@@ -32,8 +32,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
          lat = intent.getDoubleExtra("lat", 0.0)
          long = intent.getDoubleExtra("long", 0.0)
          name = intent.getStringExtra("name").toString()
-        Log.d("!!!", "Lat: $lat, Long: $long")
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -42,27 +41,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Flytta kameran till den mottagna positionen
         val position = LatLng(lat, long)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 10f))
 
-        val marker = googleMap.addMarker(MarkerOptions().position(position).title("$name")) // Lägg till markören på kartan
-
+        val marker = googleMap.addMarker(MarkerOptions().position(position).title("$name"))
         mMap.setOnMapLongClickListener { latLng ->
-            // Här har du latitud och longitud för den plats användaren valde
+
             val latitude = latLng.latitude
             val longitude = latLng.longitude
-
             val resultIntent = Intent()
-            // Lägg till latitud och longitud som extra data till Intent
+
             resultIntent.putExtra("latitude", latitude)
             resultIntent.putExtra("longitude", longitude)
 
-            // Sätt resultatet till RESULT_OK och bifoga Intent
             setResult(Activity.RESULT_OK, resultIntent)
-            // Avsluta aktiviteten
+
             finish()
-            // Nu kan vi skicka dessa värden tillbaka till den ursprungliga aktiviteten
+
         }
     }
 }

@@ -14,7 +14,7 @@ object DataManager {
 
 
     fun createMockData() {
-        //item.add(SpotList("NewYork",2,""))
+
 
 
 
