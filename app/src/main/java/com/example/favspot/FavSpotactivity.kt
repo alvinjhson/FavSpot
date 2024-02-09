@@ -93,6 +93,7 @@ class FavSpotactivity : AppCompatActivity() {
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }
+    //dwadaw
     fun loadItems() {
         DataManager.item.clear()
         val user = auth.currentUser
